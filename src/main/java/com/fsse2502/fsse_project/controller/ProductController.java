@@ -14,11 +14,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("public/product")
-public class productController {
+public class ProductController {
 
     private final ProductService productService;
 
-    public productController(ProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 

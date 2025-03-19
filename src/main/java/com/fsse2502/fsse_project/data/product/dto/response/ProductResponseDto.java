@@ -1,7 +1,6 @@
 package com.fsse2502.fsse_project.data.product.dto.response;
 
 import com.fsse2502.fsse_project.data.product.domainObject.response.ProductResponseData;
-import com.fsse2502.fsse_project.data.product.entity.ProductEntity;
 
 import java.math.BigDecimal;
 
