@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer pid;
     @Column (nullable = false)
     private String name;
     @Column
@@ -24,12 +24,12 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getPid() {
+        return pid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPid(Integer id) {
+        this.pid = id;
     }
 
     public String getName() {

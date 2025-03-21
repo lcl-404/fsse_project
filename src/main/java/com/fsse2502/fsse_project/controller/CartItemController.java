@@ -1,7 +1,7 @@
 package com.fsse2502.fsse_project.controller;
 
 import com.fsse2502.fsse_project.data.cartItem.domainObject.response.CartItemResponseData;
-import com.fsse2502.fsse_project.data.cartItem.dto.response.GetUserCartResponseDto;
+import com.fsse2502.fsse_project.data.cartItem.dto.response.CartItemResponseDto;
 import com.fsse2502.fsse_project.data.user.domainObject.request.FireBaseUserData;
 import com.fsse2502.fsse_project.service.CartItemService;
 import com.fsse2502.fsse_project.util.JwtUtil;
@@ -34,12 +34,12 @@ public class CartItemController {
     }
 
     @GetMapping()
-    public List<GetUserCartResponseDto> getUserCart(JwtAuthenticationToken token){
+    public List<CartItemResponseDto> getUserCart(JwtAuthenticationToken token){
         FireBaseUserData fireBaseUserData = JwtUtil.toFirebaseUserData(token);
         List<CartItemResponseData> cartItemResponseData = cartItemService.getUserCart(fireBaseUserData);
-        List<GetUserCartResponseDto> userCartResponseDtoList = new ArrayList<>();
+        List<CartItemResponseDto> userCartResponseDtoList = new ArrayList<>();
         for (CartItemResponseData responseData : cartItemResponseData) {
-            userCartResponseDtoList.add(new GetUserCartResponseDto(responseData));
+            userCartResponseDtoList.add(new CartItemResponseDto(responseData));
         }
 
     return userCartResponseDtoList;
@@ -49,7 +49,7 @@ public class CartItemController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateCartQuantity (JwtAuthenticationToken token, @PathVariable Integer pid, @PathVariable @Positive Integer quantity){
         FireBaseUserData fireBaseUserData = JwtUtil.toFirebaseUserData(token);
-        cartItemService.updateCartQuantity(fireBaseUserData, pid, quantity);
+        cartItemService.patchCartQuantity(fireBaseUserData, pid, quantity);
     }
 
     @DeleteMapping("/{pid}")

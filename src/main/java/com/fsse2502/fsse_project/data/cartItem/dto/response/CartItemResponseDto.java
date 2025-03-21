@@ -4,7 +4,7 @@ import com.fsse2502.fsse_project.data.cartItem.domainObject.response.CartItemRes
 
 import java.math.BigDecimal;
 
-public class GetUserCartResponseDto {
+public class CartItemResponseDto {
     private Integer pid;
     private String name;
     private String imageUrl;
@@ -12,7 +12,7 @@ public class GetUserCartResponseDto {
     private Integer cartQuantity;
     private Integer stock;
 
-    public GetUserCartResponseDto(CartItemResponseData responseData) {
+    public CartItemResponseDto(CartItemResponseData responseData) {
         this.pid = responseData.getProduct().getId();
         this.name = responseData.getProduct().getName();
         this.imageUrl = responseData.getProduct().getImageUrl();

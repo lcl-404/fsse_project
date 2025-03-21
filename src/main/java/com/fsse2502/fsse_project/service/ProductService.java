@@ -11,5 +11,7 @@ public interface ProductService {
 
     ProductResponseData findByPid(Integer pid);
 
+    boolean productHasStock(ProductEntity productEntity, Integer quantity);
+
     ProductEntity getEntityByPid(Integer pid);
 }

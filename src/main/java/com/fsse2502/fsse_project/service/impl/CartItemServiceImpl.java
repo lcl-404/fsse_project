@@ -6,7 +6,6 @@ import com.fsse2502.fsse_project.data.product.entity.ProductEntity;
 import com.fsse2502.fsse_project.data.user.domainObject.request.FireBaseUserData;
 import com.fsse2502.fsse_project.data.user.entity.UserEntity;
 import com.fsse2502.fsse_project.exception.cartItem.ProductNotInCartException;
-import com.fsse2502.fsse_project.exception.product.ProductOutOfStockException;
 import com.fsse2502.fsse_project.repository.CartItemRepository;
 import com.fsse2502.fsse_project.service.CartItemService;
 import com.fsse2502.fsse_project.service.ProductService;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CartItemServiceImpl implements CartItemService {
@@ -39,62 +37,38 @@ public class CartItemServiceImpl implements CartItemService {
         try{
             ProductEntity productEntity = productService.getEntityByPid(pid);
             UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
+            productService.productHasStock(productEntity, quantity);
+            CartItemEntity cartItemEntity = cartItemRepository.findByUserAndProduct(userEntity, productEntity)
+                    .orElseGet(()-> new CartItemEntity(userEntity, productEntity, quantity));
+            cartItemEntity.setQuantity(cartItemEntity.getQuantity()+quantity);
+            productService.productHasStock(productEntity, cartItemEntity.getQuantity());
 
-            if (productHasStock(productEntity, quantity)) {
-//                UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
-//                if(cartHasExistingItem(userEntity, productEntity).isPresent()){
-//                    CartItemEntity existingCartItemEntity = cartHasExistingItem(userEntity,productEntity).get();
-//                    Integer newQuantity = existingCartItemEntity.getQuantity() + quantity;
-//                    if(productHasStock(productEntity, newQuantity)){
-//                        existingCartItemEntity.setQuantity(newQuantity);
-//                        cartItemRepository.save(existingCartItemEntity);
-//                    }
-//                } else {
-//                    CartItemEntity cartItemEntity = new CartItemEntity(userEntity, productEntity, quantity);
-//                    cartItemRepository.save(cartItemEntity);
-//                }
-                Optional <CartItemEntity> existingCartItem = cartHasExistingItem(userEntity, productEntity);
-                existingCartItem.ifPresentOrElse(
-                        cartItem -> {
-                            Integer newQuantity = cartItem.getQuantity() + quantity;
-                            cartItem.setQuantity(newQuantity);
-                            cartItemRepository.save(cartItem);
-                        },
-                        ()-> cartItemRepository.save(new CartItemEntity(userEntity, productEntity, quantity))
-                );
-
-
-            }
         } catch (Exception e) {
             log.warn("Add item(s) in cart failed: " + e.getMessage());
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 
     @Override
     public List<CartItemResponseData> getUserCart(FireBaseUserData fireBaseUserData){
         UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
-        List <CartItemEntity> userCart = cartItemRepository.findByUser(userEntity);
+        List <CartItemEntity> cartItemEntityList = cartItemRepository.findByUser(userEntity);
         List <CartItemResponseData> cartItemResponseDataList = new ArrayList<>();
-        for (CartItemEntity cartItem : userCart){
+        for (CartItemEntity cartItem : cartItemEntityList){
             cartItemResponseDataList.add(new CartItemResponseData(cartItem));
         }
         return cartItemResponseDataList;
     }
 
+    @Transactional
     @Override
-    public void updateCartQuantity(FireBaseUserData fireBaseUserData, Integer pid, Integer quantity){
-        UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
-        ProductEntity productEntity = productService.getEntityByPid(pid);
+    public void patchCartQuantity(FireBaseUserData fireBaseUserData, Integer pid, Integer quantity){
         try {
-            if (cartHasExistingItem(userEntity, productEntity).isEmpty()) {
-                throw new ProductNotInCartException(pid);
-            }
-
-            CartItemEntity existingProductEntity = cartHasExistingItem(userEntity, productEntity).get();
-            existingProductEntity.setQuantity(quantity);
-            cartItemRepository.save(existingProductEntity);
-
+            UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
+            ProductEntity productEntity = productService.getEntityByPid(pid);
+            CartItemEntity cartItemEntity = cartHasExistingItem(userEntity, productEntity);
+            productService.productHasStock(productEntity, quantity);
+            cartItemEntity.setQuantity(quantity);
         } catch (Exception e){
             log.warn("Update cart item quantity failed: " + e.getMessage());
             throw e;
@@ -105,29 +79,19 @@ public class CartItemServiceImpl implements CartItemService {
     @Transactional
     @Override
     public void deleteCartItem(FireBaseUserData fireBaseUserData, Integer pid){
-        UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
-        ProductEntity productEntity = productService.getEntityByPid(pid);
-
         try{
-            if (cartHasExistingItem(userEntity, productEntity).isEmpty()){
+            if (cartItemRepository.deleteByUser_EmailAndProduct_pid(fireBaseUserData.getEmail(), pid) == 0){
                 throw new ProductNotInCartException(pid);
             }
-            cartItemRepository.removeCartItemEntitiesByProduct(productEntity);
         }catch (Exception e){
             log.warn("Delete cart item failed: " + e.getMessage());
             throw e;
         }
     }
 
-    public Optional<CartItemEntity> cartHasExistingItem(UserEntity user, ProductEntity product){
-        return (cartItemRepository.findByUserAndProduct(user, product));
+    public CartItemEntity cartHasExistingItem(UserEntity user, ProductEntity product){
+        return cartItemRepository.findByUserAndProduct(user, product)
+                .orElseThrow(()-> new ProductNotInCartException(product.getPid()));
     }
 
-    public boolean productHasStock(ProductEntity productEntity, Integer quantity){
-        if(productEntity.getStock() > 0 &&
-            productEntity.getStock() >= quantity){
-            return true;
-        }
-        throw new ProductOutOfStockException(productEntity.getId());
-    }
 }

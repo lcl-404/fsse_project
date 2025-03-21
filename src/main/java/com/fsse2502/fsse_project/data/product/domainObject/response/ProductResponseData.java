@@ -14,7 +14,7 @@ public class ProductResponseData {
     private Integer stock;
 
     public ProductResponseData(ProductEntity productEntity) {
-        this.id = productEntity.getId();
+        this.id = productEntity.getPid();
         this.name = productEntity.getName();
         this.description = productEntity.getDescription();
         this.imageUrl = productEntity.getImageUrl();

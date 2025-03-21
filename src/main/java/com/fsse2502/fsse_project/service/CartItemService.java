@@ -11,7 +11,8 @@ public interface CartItemService {
 
     List<CartItemResponseData> getUserCart(FireBaseUserData fireBaseUserData);
 
-    void updateCartQuantity(FireBaseUserData fireBaseUserData, Integer pid, Integer quantity);
+    @Transactional
+    void patchCartQuantity(FireBaseUserData fireBaseUserData, Integer pid, Integer quantity);
 
     @Transactional
     void deleteCartItem(FireBaseUserData fireBaseUserData, Integer pid);

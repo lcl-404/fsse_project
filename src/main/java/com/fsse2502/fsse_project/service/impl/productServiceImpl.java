@@ -3,6 +3,7 @@ package com.fsse2502.fsse_project.service.impl;
 import com.fsse2502.fsse_project.data.product.domainObject.response.ProductResponseData;
 import com.fsse2502.fsse_project.data.product.entity.ProductEntity;
 import com.fsse2502.fsse_project.exception.product.ProductNotFoundException;
+import com.fsse2502.fsse_project.exception.product.ProductOutOfStockException;
 import com.fsse2502.fsse_project.repository.ProductRepository;
 import com.fsse2502.fsse_project.service.ProductService;
 import org.slf4j.Logger;
@@ -37,6 +38,15 @@ public class productServiceImpl implements ProductService {
             log.warn("Get product by pid failed: " + e.getMessage());
             throw e;
         }
+    }
+
+    @Override
+    public boolean productHasStock(ProductEntity productEntity, Integer quantity){
+        if(productEntity.getStock() > 0 &&
+                productEntity.getStock() >= quantity){
+            return true;
+        }
+        throw new ProductOutOfStockException(productEntity.getPid());
     }
 
     public ProductEntity getEntityByPid(Integer pid){
