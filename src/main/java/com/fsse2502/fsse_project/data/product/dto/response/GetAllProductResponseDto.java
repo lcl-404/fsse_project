@@ -1,5 +1,6 @@
 package com.fsse2502.fsse_project.data.product.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fsse2502.fsse_project.data.product.domainObject.response.ProductResponseData;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ public class GetAllProductResponseDto {
     private String name;
     private String imageUrl;
     private BigDecimal price;
+    @JsonProperty("hasStock")
     private boolean getStock;
 
     public GetAllProductResponseDto(ProductResponseData responseData) {

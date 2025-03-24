@@ -15,4 +15,5 @@ public interface CartItemRepository  extends CrudRepository<CartItemEntity, Inte
     Optional<CartItemEntity> findByUserAndProduct(UserEntity user, ProductEntity product);
     Integer deleteByUser_EmailAndProduct_pid(String userEmail, Integer pid);
 
+    void deleteByUser(UserEntity user);
 }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("public/product")
+@RequestMapping("public/products")
 public class ProductController {
 
     private final ProductService productService;

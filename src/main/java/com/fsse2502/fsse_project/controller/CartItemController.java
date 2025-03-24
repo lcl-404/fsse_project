@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/cartItems")
 public class CartItemController {
 
     private final CartItemService cartItemService;
@@ -36,7 +36,7 @@ public class CartItemController {
     @GetMapping()
     public List<CartItemResponseDto> getUserCart(JwtAuthenticationToken token){
         FireBaseUserData fireBaseUserData = JwtUtil.toFirebaseUserData(token);
-        List<CartItemResponseData> cartItemResponseData = cartItemService.getUserCart(fireBaseUserData);
+        List<CartItemResponseData> cartItemResponseData = cartItemService.getUserCartResponseData(fireBaseUserData);
         List<CartItemResponseDto> userCartResponseDtoList = new ArrayList<>();
         for (CartItemResponseData responseData : cartItemResponseData) {
             userCartResponseDtoList.add(new CartItemResponseDto(responseData));

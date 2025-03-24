@@ -1,12 +1,13 @@
 package com.fsse2502.fsse_project.data.product.dto.response;
 
 import com.fsse2502.fsse_project.data.product.domainObject.response.ProductResponseData;
+import com.fsse2502.fsse_project.data.transactionProduct.domainObject.response.TransactionProductResponseData;
 
 import java.math.BigDecimal;
 
 public class ProductResponseDto {
 
-    private Integer id;
+    private Integer pid;
     private String name;
     private String description;
     private String imageUrl;
@@ -14,7 +15,7 @@ public class ProductResponseDto {
     private Integer stock;
 
     public ProductResponseDto(ProductResponseData data) {
-        this.id = data.getId();
+        this.pid = data.getId();
         this.name = data.getName();
         this.description = data.getDescription();
         this.imageUrl = data.getImageUrl();
@@ -22,12 +23,21 @@ public class ProductResponseDto {
         this.stock = data.getStock();
     }
 
-    public Integer getId() {
-        return id;
+    public ProductResponseDto(TransactionProductResponseData data) {
+        this.pid = data.getPid();
+        this.name = data.getName();
+        this.description = data.getDescription();
+        this.imageUrl = data.getImageUrl();
+        this.price = data.getPrice();
+        this.stock = data.getStock();
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Integer getPid() {
+        return pid;
+    }
+
+    public void setPid(Integer pid) {
+        this.pid = pid;
     }
 
     public String getName() {

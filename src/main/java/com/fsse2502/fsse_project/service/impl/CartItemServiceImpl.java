@@ -32,6 +32,7 @@ public class CartItemServiceImpl implements CartItemService {
         this.productService = productService;
     }
 
+    @Transactional
     @Override
     public void putCartItem(FireBaseUserData fireBaseUserData, Integer pid, Integer quantity){
         try{
@@ -39,9 +40,10 @@ public class CartItemServiceImpl implements CartItemService {
             UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
             productService.productHasStock(productEntity, quantity);
             CartItemEntity cartItemEntity = cartItemRepository.findByUserAndProduct(userEntity, productEntity)
-                    .orElseGet(()-> new CartItemEntity(userEntity, productEntity, quantity));
+                    .orElseGet(()-> new CartItemEntity(userEntity, productEntity, 0));
             cartItemEntity.setQuantity(cartItemEntity.getQuantity()+quantity);
             productService.productHasStock(productEntity, cartItemEntity.getQuantity());
+            cartItemRepository.save(cartItemEntity);
 
         } catch (Exception e) {
             log.warn("Add item(s) in cart failed: " + e.getMessage());
@@ -50,7 +52,15 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public List<CartItemResponseData> getUserCart(FireBaseUserData fireBaseUserData){
+    public List<CartItemEntity> getUserCartByUser(UserEntity userEntity){
+        List<CartItemEntity> cartItemEntityList= cartItemRepository.findByUser(userEntity);
+        return cartItemEntityList;
+    }
+
+
+
+    @Override
+    public List<CartItemResponseData> getUserCartResponseData(FireBaseUserData fireBaseUserData){
         UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
         List <CartItemEntity> cartItemEntityList = cartItemRepository.findByUser(userEntity);
         List <CartItemResponseData> cartItemResponseDataList = new ArrayList<>();
@@ -87,6 +97,12 @@ public class CartItemServiceImpl implements CartItemService {
             log.warn("Delete cart item failed: " + e.getMessage());
             throw e;
         }
+    }
+
+    @Transactional
+    @Override
+    public void emptyCart(UserEntity user){
+        cartItemRepository.deleteByUser(user);
     }
 
     public CartItemEntity cartHasExistingItem(UserEntity user, ProductEntity product){

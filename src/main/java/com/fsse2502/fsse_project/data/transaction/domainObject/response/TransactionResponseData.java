@@ -4,6 +4,9 @@ import com.fsse2502.fsse_project.data.transaction.entity.TransactionEntity;
 import com.fsse2502.fsse_project.data.transactionProduct.domainObject.response.TransactionProductResponseData;
 import com.fsse2502.fsse_project.data.transactionProduct.entity.TransactionProductEntity;
 import com.fsse2502.fsse_project.data.user.entity.UserEntity;
+import com.fsse2502.fsse_project.enumuration.TransactionStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,12 +19,11 @@ public class TransactionResponseData {
     private Integer tid;
     private UserEntity user;
     private LocalDateTime dateTime;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
     private BigDecimal total;
     private List<TransactionProductResponseData> transactionProductResponseDataList = new ArrayList<>();
 
-    public TransactionResponseData() {
-    }
     public TransactionResponseData(TransactionEntity transaction) {
         this.tid = transaction.getTid();
         this.user = transaction.getUser();
@@ -56,11 +58,11 @@ public class TransactionResponseData {
         this.dateTime = dateTime;
     }
 
-    public String getStatus() {
+    public TransactionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TransactionStatus status) {
         this.status = status;
     }
 

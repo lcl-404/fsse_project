@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 public class TransactionProductResponseData {
 
     private Integer tpid;
-    private Integer tid;
     private Integer pid;
     private String name;
     private String description;
@@ -19,12 +18,8 @@ public class TransactionProductResponseData {
     private Integer stock;
     private Integer quantity;
 
-    public TransactionProductResponseData() {
-    }
-
     public TransactionProductResponseData(TransactionProductEntity transactionProduct) {
         this.tpid = transactionProduct.getTpid();
-        this.tid = transactionProduct.getTransaction().getTid();
         this.pid = transactionProduct.getPid();
         this.name = transactionProduct.getName();
         this.description = transactionProduct.getDescription();
@@ -43,13 +38,6 @@ public class TransactionProductResponseData {
         this.tpid = tpid;
     }
 
-    public Integer getTid() {
-        return tid;
-    }
-
-    public void setTid(Integer tid) {
-        this.tid = tid;
-    }
 
     public Integer getPid() {
         return pid;

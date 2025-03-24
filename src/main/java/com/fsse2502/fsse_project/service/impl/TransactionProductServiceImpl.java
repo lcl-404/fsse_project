@@ -20,8 +20,6 @@ public class TransactionProductServiceImpl implements TransactionProductService 
         this.transactionProductRepository = transactionProductRepository;
     }
 
-
-
     @Override
     public void saveTransactionProducts(TransactionEntity transactionEntity, List<CartItemEntity> cartItemEntities){
         List<TransactionProductEntity> transactionProductEntities = new ArrayList<>();
@@ -32,7 +30,6 @@ public class TransactionProductServiceImpl implements TransactionProductService 
                     cartItem.getQuantity()
             );
             transactionProductEntities.add(transactionProduct);
-            //transactionEntity.addTransactionProduct(transactionProduct);
 
         }
         Iterable<TransactionProductEntity> savedIterable = transactionProductRepository.saveAll(transactionProductEntities);

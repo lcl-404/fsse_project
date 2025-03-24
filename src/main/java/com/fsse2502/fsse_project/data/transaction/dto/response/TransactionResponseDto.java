@@ -6,6 +6,9 @@ import com.fsse2502.fsse_project.data.transaction.domainObject.response.Transact
 import com.fsse2502.fsse_project.data.transactionProduct.domainObject.response.TransactionProductResponseData;
 import com.fsse2502.fsse_project.data.transactionProduct.dto.response.TransactionProductResponseDto;
 import com.fsse2502.fsse_project.data.user.entity.UserEntity;
+import com.fsse2502.fsse_project.enumuration.TransactionStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,7 +23,8 @@ public class TransactionResponseDto {
     private Integer buyerUid;
     @JsonFormat(pattern = "yyyyMMdd'T'HH:mm:ss")
     private LocalDateTime dateTime;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
     private BigDecimal total;
     @JsonProperty("items")
     private List<TransactionProductResponseDto> transactionProductResponseDtoList = new ArrayList<>();
@@ -61,11 +65,11 @@ public class TransactionResponseDto {
         this.dateTime = dateTime;
     }
 
-    public String getStatus() {
+    public TransactionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TransactionStatus status) {
         this.status = status;
     }
 

@@ -1,11 +1,13 @@
 package com.fsse2502.fsse_project.service.impl;
 
+import com.fsse2502.fsse_project.data.cartItem.entity.CartItemEntity;
 import com.fsse2502.fsse_project.data.product.domainObject.response.ProductResponseData;
 import com.fsse2502.fsse_project.data.product.entity.ProductEntity;
 import com.fsse2502.fsse_project.exception.product.ProductNotFoundException;
 import com.fsse2502.fsse_project.exception.product.ProductOutOfStockException;
 import com.fsse2502.fsse_project.repository.ProductRepository;
 import com.fsse2502.fsse_project.service.ProductService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class productServiceImpl implements ProductService {
         }
     }
 
+
     @Override
     public boolean productHasStock(ProductEntity productEntity, Integer quantity){
         if(productEntity.getStock() > 0 &&
@@ -48,10 +51,19 @@ public class productServiceImpl implements ProductService {
         }
         throw new ProductOutOfStockException(productEntity.getPid());
     }
+    @Transactional
+    @Override
+    public void deductProductStock(CartItemEntity cartItemEntity){
+        productHasStock(cartItemEntity.getProduct(), cartItemEntity.getQuantity());
+        cartItemEntity.getProduct().setStock(
+                cartItemEntity.getProduct().getStock() - cartItemEntity.getQuantity()
+        );
+    }
 
     public ProductEntity getEntityByPid(Integer pid){
         return productRepository.findById(pid).orElseThrow(
                 ()-> new ProductNotFoundException(pid)
         );
     }
+
 }

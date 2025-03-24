@@ -22,6 +22,7 @@ public class ProductResponseData {
         this.stock = productEntity.getStock();
     }
 
+
     public Integer getId() {
         return id;
     }

@@ -3,6 +3,7 @@ package com.fsse2502.fsse_project.data.transaction.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fsse2502.fsse_project.data.transactionProduct.entity.TransactionProductEntity;
 import com.fsse2502.fsse_project.data.user.entity.UserEntity;
+import com.fsse2502.fsse_project.enumuration.TransactionStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -24,18 +25,18 @@ public class TransactionEntity {
     @JsonFormat(pattern = "yyyyMMdd'T'HH:mm:ss")
     private LocalDateTime dateTime;
     @Column (nullable = false)
-    private String status;
+    private TransactionStatus status;
     @Column (nullable = false)
     private BigDecimal total;
-    @OneToMany(mappedBy = "transaction")
+    @OneToMany(mappedBy = "transaction", fetch = FetchType.EAGER)
     private List<TransactionProductEntity> transactionProductEntityList = new ArrayList<>();
 
     public TransactionEntity() {
     }
-    public TransactionEntity(UserEntity user, LocalDateTime dateTime, String status, BigDecimal total) {
+    public TransactionEntity(UserEntity user, BigDecimal total) {
         this.user = user;
-        this.dateTime = dateTime;
-        this.status = status;
+        this.dateTime = LocalDateTime.now();
+        this.status = TransactionStatus.PREPARE;
         this.total = total;
     }
 
@@ -64,11 +65,11 @@ public class TransactionEntity {
         this.dateTime = dateTime;
     }
 
-    public String getStatus() {
+    public TransactionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TransactionStatus status) {
         this.status = status;
     }
 
@@ -87,6 +88,7 @@ public class TransactionEntity {
     public void setTransactionProductEntityList(List<TransactionProductEntity> transactionProductEntityList) {
         this.transactionProductEntityList = transactionProductEntityList;
     }
+
 
     public void addTransactionProduct(TransactionProductEntity transactionProduct) {
         transactionProductEntityList.add(transactionProduct);
