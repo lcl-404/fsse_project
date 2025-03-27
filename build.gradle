@@ -2,10 +2,11 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.3'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.cloud.tools.jib' version '3.4.5'
 }
 
 group = 'com.fsse2502'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
     toolchain {
@@ -31,4 +32,14 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jib {
+    to{
+        image="docker.io/lcl404/project-backend"
+        auth {
+            username = "lcl404"
+            password = "tPb&=uN9;;Nu5VW"
+        }
+    }
 }

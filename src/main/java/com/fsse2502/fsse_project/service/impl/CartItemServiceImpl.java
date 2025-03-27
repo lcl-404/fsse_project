@@ -38,6 +38,7 @@ public class CartItemServiceImpl implements CartItemService {
         try{
             ProductEntity productEntity = productService.getEntityByPid(pid);
             UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
+            log.debug(userEntity.getEmail());
             productService.productHasStock(productEntity, quantity);
             CartItemEntity cartItemEntity = cartItemRepository.findByUserAndProduct(userEntity, productEntity)
                     .orElseGet(()-> new CartItemEntity(userEntity, productEntity, 0));
@@ -53,6 +54,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public List<CartItemEntity> getUserCartByUser(UserEntity userEntity){
+        log.debug(userEntity.getEmail());
         List<CartItemEntity> cartItemEntityList= cartItemRepository.findByUser(userEntity);
         return cartItemEntityList;
     }

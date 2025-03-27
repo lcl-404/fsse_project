@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public TransactionResponseData createNewTransaction(FireBaseUserData fireBaseUserData){
+    public TransactionResponseData createNewTransaction(FireBaseUserData fireBaseUserData) {
         try {
             UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
             List<CartItemEntity> cartItemEntityList = cartItemService.getUserCartByUser(userEntity);
@@ -56,7 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
             transactionProductService.saveTransactionProducts(transactionEntity, cartItemEntityList);
             return new TransactionResponseData(transactionEntity);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.warn("Create new transaction failed: " + e.getMessage());
             throw e;
         }
@@ -64,14 +64,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionResponseData getTransaction(FireBaseUserData fireBaseUserData, Integer tid){
-        try{
+    public TransactionResponseData getTransaction(FireBaseUserData fireBaseUserData, Integer tid) {
+        try {
             UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
             TransactionEntity transactionEntity = findEntityByTid(tid);
             validateUser(userEntity.getEmail(), transactionEntity);
             return new TransactionResponseData(transactionEntity);
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
             log.warn("Get transaction failed: " + e.getMessage());
             throw e;
@@ -81,20 +81,20 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public void updateTransactionStatus(FireBaseUserData fireBaseUserData, Integer tid){
-        try{
+    public void updateTransactionStatus(FireBaseUserData fireBaseUserData, Integer tid) {
+        try {
             UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
             TransactionEntity transactionEntity = findEntityByTid(tid);
             validateUser(userEntity.getEmail(), transactionEntity);
-            if(transactionEntity.getStatus().equals(TransactionStatus.PROCESSING)){
+            if (transactionEntity.getStatus().equals(TransactionStatus.PROCESSING)) {
                 throw new TransactionProcessingException(tid);
             }
-            if (transactionEntity.getStatus().equals(TransactionStatus.SUCCESS)){
+            if (transactionEntity.getStatus().equals(TransactionStatus.SUCCESS)) {
                 throw new TransactionCompletedException(tid);
             }
             transactionEntity.setStatus(TransactionStatus.PROCESSING);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             log.warn("Update transaction failed " + e.getMessage());
             throw e;
         }
@@ -102,49 +102,60 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public TransactionResponseData finishTransaction(FireBaseUserData fireBaseUserData, Integer tid){
-        try{
+    public TransactionResponseData finishTransaction(FireBaseUserData fireBaseUserData, Integer tid) {
+        try {
             UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
             TransactionEntity transactionEntity = findEntityByTid(tid);
             validateUser(userEntity.getEmail(), transactionEntity);
-            if(transactionEntity.getStatus().equals(TransactionStatus.PREPARE)){
+
+            TransactionStatus status = transactionEntity.getStatus();
+            if (status == TransactionStatus.PREPARE) {
                 throw new TransactionNotProcessingException(tid);
-            } else if (transactionEntity.getStatus().equals(TransactionStatus.SUCCESS)){
+            }
+
+            if (status == TransactionStatus.SUCCESS) {
                 throw new TransactionCompletedException(tid);
             }
-            List<CartItemEntity> cartItemEntityList = cartItemService.getUserCartByUser(userEntity);
-            for (CartItemEntity cartItemEntity : cartItemEntityList){
-                productService.deductProductStock(cartItemEntity);
-            }
+
+            cartItemService.getUserCartByUser(userEntity)
+                    .forEach(productService::deductProductStock);
 
             cartItemService.emptyCart(userEntity);
             transactionEntity.setStatus(TransactionStatus.SUCCESS);
             return new TransactionResponseData(transactionEntity);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.warn("Pay transaction failed: " + e.getMessage());
             throw e;
         }
     }
 
-    public BigDecimal calculateTotal(List<CartItemEntity> cartItemEntities){
-        BigDecimal total = BigDecimal.ZERO;
-        for (CartItemEntity cartItem : cartItemEntities){
-            BigDecimal subtotal = cartItem.getProduct().getPrice()
-                    .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
-            total = total.add(subtotal);
-        }
-        return total;
+//    public BigDecimal calculateTotal(List<CartItemEntity> cartItemEntities) {
+//        BigDecimal total = BigDecimal.ZERO;
+//        for (CartItemEntity cartItem : cartItemEntities) {
+//            BigDecimal subtotal = cartItem.getProduct().getPrice()
+//                    .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+//            total = total.add(subtotal);
+//        }
+//        return total;
+//    }
+
+    private BigDecimal calculateTotal(List<CartItemEntity> cartItems) {
+        return cartItems.stream()
+                .map(item -> item.getProduct().getPrice()
+                        .multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public TransactionEntity findEntityByTid(Integer tid){
+
+    public TransactionEntity findEntityByTid(Integer tid) {
         return transactionRepository.findByTid(tid).orElseThrow(
-                ()-> new TransactionNotFoundException(tid)
+                () -> new TransactionNotFoundException(tid)
         );
     }
 
-    public void validateUser(String email, TransactionEntity transactionEntity){
-        if(!email.equals(transactionEntity.getUser().getEmail())){
+    public void validateUser(String email, TransactionEntity transactionEntity) {
+        if (!email.equals(transactionEntity.getUser().getEmail())) {
             throw new RuntimeException();
         }
     }

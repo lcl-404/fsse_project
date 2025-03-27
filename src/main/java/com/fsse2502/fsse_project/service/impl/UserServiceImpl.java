@@ -16,12 +16,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity getEntityByEmail(FireBaseUserData fireBaseUserData) {
-//        Optional<UserEntity> optionalUserEntity = userRepository.findByEmail(fireBaseUserData.getEmail());
-//        if (optionalUserEntity.isPresent()) {
-//            return optionalUserEntity.get();
-//        }
-//        UserEntity userEntity = new UserEntity(fireBaseUserData);
-//        return userRepository.save(userEntity);
 
         return userRepository.findByEmail((fireBaseUserData.getEmail())).orElseGet(
             ()-> userRepository.save(new UserEntity(fireBaseUserData))
