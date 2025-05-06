@@ -13,6 +13,7 @@ import com.fsse2502.fsse_project.service.UserService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -103,6 +104,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Transactional
     @Override
+    @CacheEvict(value = "cartItems", key = "#user.firebaseUid")
     public void emptyCart(UserEntity user){
         cartItemRepository.deleteByUser(user);
     }

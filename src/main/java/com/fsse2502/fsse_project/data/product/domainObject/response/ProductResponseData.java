@@ -6,29 +6,31 @@ import java.math.BigDecimal;
 
 public class ProductResponseData {
 
-    private Integer id;
+    private Integer pid;
     private String name;
     private String description;
     private String imageUrl;
     private BigDecimal price;
     private Integer stock;
+    private String category;
 
     public ProductResponseData(ProductEntity productEntity) {
-        this.id = productEntity.getPid();
+        this.pid = productEntity.getPid();
         this.name = productEntity.getName();
         this.description = productEntity.getDescription();
         this.imageUrl = productEntity.getImageUrl();
         this.price = productEntity.getPrice();
         this.stock = productEntity.getStock();
+        this.category = productEntity.getCategory();
     }
 
 
-    public Integer getId() {
-        return id;
+    public Integer getPid() {
+        return pid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPid(Integer pid) {
+        this.pid = pid;
     }
 
     public String getName() {
@@ -69,5 +71,13 @@ public class ProductResponseData {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

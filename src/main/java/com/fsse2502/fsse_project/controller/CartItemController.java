@@ -6,6 +6,9 @@ import com.fsse2502.fsse_project.data.user.domainObject.request.FireBaseUserData
 import com.fsse2502.fsse_project.service.CartItemService;
 import com.fsse2502.fsse_project.util.JwtUtil;
 import jakarta.validation.constraints.Positive;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cartItems")
+@RequestMapping("/cart/items")
 public class CartItemController {
 
     private final CartItemService cartItemService;

@@ -13,7 +13,7 @@ public class CartItemResponseDto {
     private Integer stock;
 
     public CartItemResponseDto(CartItemResponseData responseData) {
-        this.pid = responseData.getProduct().getId();
+        this.pid = responseData.getProduct().getPid();
         this.name = responseData.getProduct().getName();
         this.imageUrl = responseData.getProduct().getImageUrl();
         this.price = responseData.getProduct().getPrice();

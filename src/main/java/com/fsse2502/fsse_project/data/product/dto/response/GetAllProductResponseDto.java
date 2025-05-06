@@ -4,29 +4,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fsse2502.fsse_project.data.product.domainObject.response.ProductResponseData;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 
 public class GetAllProductResponseDto {
-    private Integer id;
+    private Integer pid;
     private String name;
     private String imageUrl;
     private BigDecimal price;
     @JsonProperty("hasStock")
     private boolean getStock;
+    private String category;
 
     public GetAllProductResponseDto(ProductResponseData responseData) {
-        this.id = responseData.getId();
+        this.pid = responseData.getPid();
         this.name = responseData.getName();
         this.imageUrl = responseData.getImageUrl();
         this.price = responseData.getPrice();
         this.getStock = (responseData.getStock()>0);
+        this.category = responseData.getCategory();
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getPid() {
+        return pid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPid(Integer id) {
+        this.pid = id;
     }
 
     public String getName() {
@@ -60,5 +63,17 @@ public class GetAllProductResponseDto {
 
     public void setGetStock(boolean getStock) {
         this.getStock = getStock;
+    }
+
+    public boolean isGetStock() {
+        return getStock;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

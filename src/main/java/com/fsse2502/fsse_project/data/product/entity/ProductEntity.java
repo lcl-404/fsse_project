@@ -20,6 +20,8 @@ public class ProductEntity {
     private BigDecimal price;
     @Column (nullable = false)
     private Integer stock;
+    @Column (nullable = false)
+    private String category;
 
     public ProductEntity() {
     }
@@ -70,5 +72,13 @@ public class ProductEntity {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

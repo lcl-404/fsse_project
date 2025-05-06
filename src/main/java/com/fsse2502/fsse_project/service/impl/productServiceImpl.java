@@ -32,6 +32,16 @@ public class productServiceImpl implements ProductService {
         }
         return  productResponseDataList;
     }
+
+    @Override
+    public List<ProductResponseData> getByCategory(String category){
+        List <ProductResponseData> productResponseDataList = new ArrayList<>();
+        for (ProductEntity productEntity: productRepository.findByCategory(category)){
+            productResponseDataList.add(new ProductResponseData(productEntity));
+        }
+        return productResponseDataList;
+    }
+
     @Override
     public ProductResponseData findByPid(Integer pid){
         try{
@@ -41,6 +51,7 @@ public class productServiceImpl implements ProductService {
             throw e;
         }
     }
+
 
 
     @Override
@@ -65,5 +76,6 @@ public class productServiceImpl implements ProductService {
                 ()-> new ProductNotFoundException(pid)
         );
     }
+
 
 }

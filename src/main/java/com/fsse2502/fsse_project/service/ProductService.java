@@ -12,6 +12,8 @@ import java.util.List;
 public interface ProductService {
     List<ProductResponseData> getAllProducts();
 
+    List<ProductResponseData> getByCategory(String category);
+
     ProductResponseData findByPid(Integer pid);
 
     @Transactional

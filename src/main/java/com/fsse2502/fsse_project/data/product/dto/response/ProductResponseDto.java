@@ -13,14 +13,17 @@ public class ProductResponseDto {
     private String imageUrl;
     private BigDecimal price;
     private Integer stock;
+    private String category;
 
     public ProductResponseDto(ProductResponseData data) {
-        this.pid = data.getId();
+        this.pid = data.getPid();
         this.name = data.getName();
         this.description = data.getDescription();
         this.imageUrl = data.getImageUrl();
         this.price = data.getPrice();
         this.stock = data.getStock();
+        this.category = data.getCategory();
+
     }
 
     public ProductResponseDto(TransactionProductResponseData data) {
@@ -78,5 +81,13 @@ public class ProductResponseDto {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
