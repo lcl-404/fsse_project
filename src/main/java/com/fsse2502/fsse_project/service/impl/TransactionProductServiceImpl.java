@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class TransactionProductServiceImpl implements TransactionProductService {
@@ -44,7 +43,7 @@ public class TransactionProductServiceImpl implements TransactionProductService 
                 .map(cartItem -> new TransactionProductEntity(
                         transactionEntity,
                         cartItem.getProduct(),
-                        cartItem.getQuantity()
+                        cartItem.getCartQuantity()
                 ))
                 .collect(Collectors.toList());
 

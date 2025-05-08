@@ -4,6 +4,7 @@ import com.fsse2502.fsse_project.data.cartItem.entity.CartItemEntity;
 import com.fsse2502.fsse_project.data.product.domainObject.response.ProductResponseData;
 import com.fsse2502.fsse_project.data.product.entity.ProductEntity;
 import com.fsse2502.fsse_project.data.transactionProduct.entity.TransactionProductEntity;
+import com.fsse2502.fsse_project.data.user.entity.UserEntity;
 import jakarta.transaction.Transactional;
 
 import java.util.List;

@@ -34,4 +34,10 @@ public interface CartItemRepository  extends CrudRepository<CartItemEntity, Inte
     @Modifying
     @Query("DELETE FROM CartItemEntity c WHERE c.user = :user")
     void deleteByUser(@Param("user") UserEntity user);
+
+    @Query("SELECT c.cartQuantity FROM CartItemEntity c WHERE c.user = :user AND c.product = :product")
+    Optional<Integer> findCartQuantityByUserAndProduct(@Param("user") UserEntity user,
+                                                       @Param("product") ProductEntity product);
+
+
 }

@@ -17,16 +17,16 @@ public class CartItemEntity {
     @ManyToOne
     @JoinColumn(name = "uid", nullable = false)
     private UserEntity user;
-    @Column(nullable = false)
-    private Integer quantity;
+    @Column(name = "quantity", nullable = false)
+    private Integer cartQuantity;
 
     public CartItemEntity() {
     }
 
-    public CartItemEntity(UserEntity user, ProductEntity product, Integer quantity){
+    public CartItemEntity(UserEntity user, ProductEntity product, Integer cartQuantity){
         this.user = user;
         this.product = product;
-        this.quantity = quantity;
+        this.cartQuantity = cartQuantity;
     }
 
     public Integer getCid() {
@@ -53,11 +53,11 @@ public class CartItemEntity {
         this.user = user;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public Integer getCartQuantity() {
+        return cartQuantity;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setCartQuantity(Integer quantity) {
+        this.cartQuantity = quantity;
     }
 }

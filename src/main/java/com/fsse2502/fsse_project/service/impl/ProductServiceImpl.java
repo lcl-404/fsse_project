@@ -6,6 +6,7 @@ import com.fsse2502.fsse_project.data.product.entity.ProductEntity;
 import com.fsse2502.fsse_project.exception.product.ProductNotFoundException;
 import com.fsse2502.fsse_project.exception.product.ProductOutOfStockException;
 import com.fsse2502.fsse_project.repository.ProductRepository;
+import com.fsse2502.fsse_project.service.CartItemService;
 import com.fsse2502.fsse_project.service.ProductService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -16,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class productServiceImpl implements ProductService {
-    private final Logger log = LoggerFactory.getLogger(productServiceImpl.class);
+public class ProductServiceImpl implements ProductService {
+    private final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
     private final ProductRepository productRepository;
 
-    public productServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
@@ -65,17 +66,21 @@ public class productServiceImpl implements ProductService {
     @Transactional
     @Override
     public void deductProductStock(CartItemEntity cartItemEntity){
-        productHasStock(cartItemEntity.getProduct(), cartItemEntity.getQuantity());
+        productHasStock(cartItemEntity.getProduct(), cartItemEntity.getCartQuantity());
         cartItemEntity.getProduct().setStock(
-                cartItemEntity.getProduct().getStock() - cartItemEntity.getQuantity()
+                cartItemEntity.getProduct().getStock() - cartItemEntity.getCartQuantity()
         );
     }
+
+
 
     public ProductEntity getEntityByPid(Integer pid){
         return productRepository.findById(pid).orElseThrow(
                 ()-> new ProductNotFoundException(pid)
         );
     }
+
+
 
 
 }

@@ -143,7 +143,7 @@ public class TransactionServiceImpl implements TransactionService {
     private BigDecimal calculateTotal(List<CartItemEntity> cartItems) {
         return cartItems.stream()
                 .map(item -> item.getProduct().getPrice()
-                        .multiply(BigDecimal.valueOf(item.getQuantity())))
+                        .multiply(BigDecimal.valueOf(item.getCartQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 

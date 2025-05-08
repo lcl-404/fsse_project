@@ -1,7 +1,9 @@
 package com.fsse2502.fsse_project.controller;
 
 import com.fsse2502.fsse_project.data.cartItem.domainObject.response.CartItemResponseData;
+import com.fsse2502.fsse_project.data.cartItem.domainObject.response.EffectiveStockResponseData;
 import com.fsse2502.fsse_project.data.cartItem.dto.response.CartItemResponseDto;
+import com.fsse2502.fsse_project.data.cartItem.dto.response.EffectiveStockResponseDto;
 import com.fsse2502.fsse_project.data.user.domainObject.request.FireBaseUserData;
 import com.fsse2502.fsse_project.service.CartItemService;
 import com.fsse2502.fsse_project.util.JwtUtil;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cart/items")
+@CrossOrigin("http://localhost:5173")
 public class CartItemController {
 
     private final CartItemService cartItemService;
@@ -60,5 +63,13 @@ public class CartItemController {
     public void deleteCartItem(JwtAuthenticationToken token, @PathVariable Integer pid){
         FireBaseUserData fireBaseUserData = JwtUtil.toFirebaseUserData(token);
         cartItemService.deleteCartItem(fireBaseUserData, pid);
+    }
+
+    @GetMapping("/{pid}/effectiveStock")
+    public EffectiveStockResponseDto getCartItemEffectiveStock (JwtAuthenticationToken token, @PathVariable Integer pid){
+        FireBaseUserData fireBaseUserData = JwtUtil.toFirebaseUserData(token);
+        return new EffectiveStockResponseDto(
+            new EffectiveStockResponseData(cartItemService.getEffectiveStockByUserAndProduct(fireBaseUserData, pid))
+        );
     }
 }

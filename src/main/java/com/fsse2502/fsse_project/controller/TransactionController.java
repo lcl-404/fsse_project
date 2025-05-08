@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/transactions")
+@CrossOrigin("http://localhost:5173")
+
 public class TransactionController {
     private final TransactionService transactionService;
 
@@ -20,7 +22,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/prepare")
+    @PostMapping()
     public TransactionResponseDto createTransaction(JwtAuthenticationToken token){
         FireBaseUserData fireBaseUserData = JwtUtil.toFirebaseUserData(token);
         return new TransactionResponseDto(

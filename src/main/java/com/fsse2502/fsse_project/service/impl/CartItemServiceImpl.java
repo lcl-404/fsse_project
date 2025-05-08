@@ -6,6 +6,7 @@ import com.fsse2502.fsse_project.data.product.entity.ProductEntity;
 import com.fsse2502.fsse_project.data.user.domainObject.request.FireBaseUserData;
 import com.fsse2502.fsse_project.data.user.entity.UserEntity;
 import com.fsse2502.fsse_project.exception.cartItem.ProductNotInCartException;
+import com.fsse2502.fsse_project.exception.product.ProductOutOfStockException;
 import com.fsse2502.fsse_project.repository.CartItemRepository;
 import com.fsse2502.fsse_project.service.CartItemService;
 import com.fsse2502.fsse_project.service.ProductService;
@@ -13,7 +14,6 @@ import com.fsse2502.fsse_project.service.UserService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,8 +43,8 @@ public class CartItemServiceImpl implements CartItemService {
             productService.productHasStock(productEntity, quantity);
             CartItemEntity cartItemEntity = cartItemRepository.findByUserAndProduct(userEntity, productEntity)
                     .orElseGet(()-> new CartItemEntity(userEntity, productEntity, 0));
-            cartItemEntity.setQuantity(cartItemEntity.getQuantity()+quantity);
-            productService.productHasStock(productEntity, cartItemEntity.getQuantity());
+            cartItemEntity.setCartQuantity(cartItemEntity.getCartQuantity()+quantity);
+            productService.productHasStock(productEntity, cartItemEntity.getCartQuantity());
             cartItemRepository.save(cartItemEntity);
 
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class CartItemServiceImpl implements CartItemService {
             ProductEntity productEntity = productService.getEntityByPid(pid);
             CartItemEntity cartItemEntity = cartHasExistingItem(userEntity, productEntity);
             productService.productHasStock(productEntity, quantity);
-            cartItemEntity.setQuantity(quantity);
+            cartItemEntity.setCartQuantity(quantity);
         } catch (Exception e){
             log.warn("Update cart item quantity failed: " + e.getMessage());
             throw e;
@@ -104,9 +104,26 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Transactional
     @Override
-    @CacheEvict(value = "cartItems", key = "#user.firebaseUid")
     public void emptyCart(UserEntity user){
         cartItemRepository.deleteByUser(user);
+    }
+
+
+    @Override
+    public Integer getEffectiveStockByUserAndProduct(FireBaseUserData fireBaseUserData, Integer pid){
+        ProductEntity product = productService.getEntityByPid(pid);
+        UserEntity userEntity = userService.getEntityByEmail(fireBaseUserData);
+        Integer cartQuantity = cartItemRepository.findCartQuantityByUserAndProduct(userEntity, product)
+                .orElse(0);
+        try {
+            if(product.getStock()<cartQuantity){
+                throw new ProductOutOfStockException(pid);
+            }
+        } catch (Exception e) {
+            log.warn("get effective stock failed: " + e.getMessage());
+            throw e;
+        }
+        return product.getStock()-cartQuantity;
     }
 
     public CartItemEntity cartHasExistingItem(UserEntity user, ProductEntity product){

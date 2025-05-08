@@ -15,7 +15,7 @@ public class CartItemResponseData {
         this.cid = cartItemEntity.getCid();
         this.product = new ProductResponseData(cartItemEntity.getProduct());
         this.user = new UserResponseData(cartItemEntity.getUser());
-        this.quantity = cartItemEntity.getQuantity();
+        this.quantity = cartItemEntity.getCartQuantity();
 
     }
 
